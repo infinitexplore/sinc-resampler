@@ -19,12 +19,8 @@ class NewSample(val channels: Int, params: RsmpParameters) extends Module {
   )
   val inputShiftReg      = RegInit(params.initialInputShift)
 
-  // mulAddVal goes through several CL components to generate the final sample.
-  // Downstream module should always have input latch to get stable sample.
-  // STA can detect timing violation.
-  // However, a new state sPrepare is still added to gain one cycle margin.
   object State extends ChiselEnum {
-    val sIdle, sInputShift, sCompute, sPrepare, sDone = Value
+    val sIdle, sInputShift, sComputePrime, sCompute, sPrepare, sDone = Value
   }
   import State._
 
@@ -38,7 +34,7 @@ class NewSample(val channels: Int, params: RsmpParameters) extends Module {
   val sincInterplote = Module(new SincInterpolate)
   sincInterplote.io.phase := phaseStepReg.abs.asUInt
 
-  val newSincValue = sincInterplote.io.newSincValue
+  val newSincValue = RegNext(sincInterplote.io.newSincValue)
 
   val mulAddVal = RegInit(VecInit(Seq.fill(channels)(0.S(32.W))))
   mulAddVal.zipWithIndex.foreach { case (sample, channel) =>
@@ -54,7 +50,7 @@ class NewSample(val channels: Int, params: RsmpParameters) extends Module {
       )
     )
 
-    io.newSample.bits(channel) := vResult(15, 0).asSInt
+    io.newSample.bits(channel) := RegNext(vResult(15, 0).asSInt)
   }
 
   // FIXME: use Mem instead of Reg to save resources
@@ -74,7 +70,7 @@ class NewSample(val channels: Int, params: RsmpParameters) extends Module {
     is(sIdle) {
       counter := 1.U
       when(inputShiftReg === 0.U) {
-        state        := sCompute
+        state        := sComputePrime
         phaseStepReg := (((params.hp * phaseStartReg) >> 15) + (RsmpParameters.numSamples << 7).U).zext
       }.otherwise {
         when(io.inputSample.valid) {
@@ -105,10 +101,14 @@ class NewSample(val channels: Int, params: RsmpParameters) extends Module {
         counter := counter + 1.U
         when(counter === inputShiftReg) {
           counter      := 1.U
-          state        := sCompute
+          state        := sComputePrime
           phaseStepReg := (((params.hp * phaseStartReg) >> 15) + (RsmpParameters.numSamples << 7).U).zext
         }
       }
+    }
+    is(sComputePrime) {
+      phaseStepReg := phaseStepReg - params.hp.zext
+      state        := sCompute
     }
     is(sCompute) {
       counter      := counter + 1.U

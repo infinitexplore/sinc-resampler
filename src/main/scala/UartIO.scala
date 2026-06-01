@@ -3,8 +3,8 @@ import circt.stage.ChiselStage
 import chisel3.util._
 
 /**
- *  Modified from Leros UART implementation
- *  https://github.com/leros-dev/leros/blob/master/src/main/scala/leros/uart/UARTTx.scala
+ * Modified from Leros UART implementation
+ * https://github.com/leros-dev/leros/blob/master/src/main/scala/leros/uart/UARTTx.scala
  */
 class UartIO extends DecoupledIO(UInt(8.W))
 
@@ -16,7 +16,7 @@ class UartTx(val clockRate: Int, val baudRate: Int) extends Module {
 
   val clockDividerForBaudRate =
     ((clockRate + baudRate / 2) / baudRate - 1).asUInt
-  val shiftReg                = RegInit(0x7ff.U)
+  val shiftReg                = RegInit(0x7FF.U)
   val cntReg                  = RegInit(0.U(22.W))
   val bitsReg                 = RegInit(0.U(4.W))
 

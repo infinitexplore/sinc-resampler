@@ -11,7 +11,7 @@ class SampleUartTxTestDriver extends Module {
   val tx = Module(new SampleUartTx(16, 1, 1000000))
   io.txd := tx.uartTx.txd
 
-  val msg        = Seq(0x1234, 0x5678, 0x9abc, 0xdef0)
+  val msg        = Seq(0x1234, 0x5678, 0x9ABC, 0xDEF0)
   val msgVec     = VecInit(msg.map(_.U(16.W).asSInt))
   val sampeIndex = RegInit(0.U(log2Ceil(msg.length).W))
 

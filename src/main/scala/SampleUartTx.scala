@@ -1,8 +1,7 @@
 import chisel3._
 import chisel3.util._
 
-class SampleUartTx(val bitDepth: Int, val channels: Int, clockRate: Int)
-    extends SampleWrite {
+class SampleUartTx(val bitDepth: Int, val channels: Int, clockRate: Int) extends SampleWrite {
   val uartTx = IO(new Bundle {
     val txd     = Output(UInt(1.W))
     val running = Output(Bool())

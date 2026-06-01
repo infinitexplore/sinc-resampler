@@ -6,11 +6,11 @@ import chisel3.util._
 import chisel3.util.experimental.{loadMemoryFromFile, loadMemoryFromFileInline}
 
 class SampleMemRead(
-    val bitDepth:  Int,
-    val channels:  Int,
+    val bitDepth: Int,
+    val channels: Int,
     audioFilePath: String,
-    numSamples:    Int,
-    loadInline:    Boolean
+    numSamples: Int,
+    loadInline: Boolean
 ) extends SampleRead {
 
   val addr = RegInit(0.U((log2Ceil(numSamples + 1).W)))

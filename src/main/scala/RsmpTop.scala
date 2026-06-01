@@ -6,10 +6,10 @@ import scala.io.Source
 
 // FIXME: currently only supports 16-bits precision
 class RsmpSystem(
-    freqX:      Int,
-    freqY:      Int,
-    channels:   Int,
-    audioFile:  String,
+    freqX: Int,
+    freqY: Int,
+    channels: Int,
+    audioFile: String,
     numSamples: Int,
     loadInline: Boolean
 ) extends Module {
@@ -35,10 +35,10 @@ class RsmpSystem(
 }
 
 class RsmpTop(
-    freqX:     Int,
-    freqY:     Int,
-    channels:  Int,
-    pllType:   String,
+    freqX: Int,
+    freqY: Int,
+    channels: Int,
+    pllType: String,
     audioFile: String
 ) extends Module {
 
@@ -59,7 +59,7 @@ class RsmpTop(
   })
   pll.io.clki := clock
 
-  val resetUntilLocked = reset.asBool | !pll.io.locked
+  val resetUntilLocked = !reset.asBool | !pll.io.locked
   val rsmp             =
     withClockAndReset(pll.io.clko, resetUntilLocked) {
       Module(
@@ -81,17 +81,17 @@ class RsmpTop(
 object RsmpTop extends App {
   @main
   def run(
-      @arg(name = "freq-x", doc = "Input sample rate") freqX:         Int = 16000,
-      @arg(name = "freq-y", doc = "Output sample rate") freqY:        Int = 48000,
-      @arg(name = "channels", doc = "Number of channels") channels:   Int = 1,
+      @arg(name = "freq-x", doc = "Input sample rate") freqX: Int = 16000,
+      @arg(name = "freq-y", doc = "Output sample rate") freqY: Int = 48000,
+      @arg(name = "channels", doc = "Number of channels") channels: Int = 1,
       @arg(
         name = "pll-type",
-        doc  = "Type of PLL to use (bypass or arty-a7-100t)"
-      ) pllType:                                                      String = "arty-a7-100t",
+        doc = "Type of PLL to use (bypass or arty-a7-100t)"
+      ) pllType: String = "arty-a7-100t",
       @arg(
         name = "audio-file-resource",
-        doc  = "Audio file in resources to use"
-      ) audioFile:                                                    String = "AudioPCM16KHz1ChSweep.mem",
+        doc = "Audio file in resources to use"
+      ) audioFile: String = "AudioPCM16KHz1ChSweep.mem",
       @arg(name = "chiselArgs", doc = "Chisel arguments") chiselArgs: Leftover[
         String
       ]

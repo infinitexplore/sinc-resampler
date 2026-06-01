@@ -31,6 +31,5 @@ class SincInterpolate extends Module {
     Mux(isOdd, sincSamplesEven(uiBy2Plus1), sincSamplesOdd(uiBy2))
 
   val sincD = sincSampleR - sincSampleL
-  // FIXME: registering the output for pipelining to make possible higher frequency
-  io.newSincValue := sincSampleL + ((sincD * thetaMI) >> 7.U)
+  io.newSincValue := (sincSampleL + ((sincD * thetaMI) >> 7.U))(15, 0).asSInt
 }

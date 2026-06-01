@@ -4,8 +4,7 @@ import chisel3.util.experimental.BoringUtils
 import chisel3.simulator.scalatest.ChiselSim
 import org.scalatest.flatspec.AnyFlatSpec
 
-class NewSampleTestTop(channels: Int, rsmpParams: RsmpParameters)
-    extends Module {
+class NewSampleTestTop(channels: Int, rsmpParams: RsmpParameters) extends Module {
   val io = IO(new Bundle {
     val inputSample = Flipped(DecoupledIO(Vec(channels, SInt(16.W))))
     val newSample   = DecoupledIO(Vec(channels, SInt(16.W)))
@@ -76,10 +75,9 @@ class NewSampleTest extends AnyFlatSpec with ChiselSim {
   it should "produce correct output samples for constant input" in {
     val constSample      = (0.5 * (1 << 15)).round.toInt.S(16.W)
     val inputSamples     = Seq.fill(64)(constSample)
-    val outputSamplesRef = Seq(14791, 17199, 17440, 16316, 15031, 14502, 14884,
-      15672, 16217, 16171, 15672, 15184, 15070, 15347, 15754, 15962, 15831,
-      15518, 15287, 15296, 15518, 15754, 15809, 15674, 15475, 15366, 15429,
-      15597, 15715, 15708, 15597)
+    val outputSamplesRef = Seq(14791, 17199, 17440, 16316, 15031, 14502, 14884, 15672, 16217, 16171, 15672, 15184,
+      15070, 15347, 15754, 15962, 15831, 15518, 15287, 15296, 15518, 15754, 15809, 15674, 15475, 15366, 15429, 15597,
+      15715, 15708, 15597)
 
     simulate(new NewSampleTestTop(1, rsmpParams)) { dut =>
       var outputIndex = 0
